@@ -127,10 +127,6 @@ NPR :: NPR(int argc, char *argv[])
 			int a,b,c,d;
 			line >> a >> b >> c >> d >> r >> i;
 			wilsonmatrix temp(0.);
-			cout << a << " ";
-			cout << b << " ";
-			cout << c << " ";
-			cout << d << endl;
 			if(flag){
 			  temp.element(a,b,c,d,complex<double>(r  * 2 / (5.-1.8) ,i  * 2 / (5.-1.8)));
 			  WS_l[index] = WS_l[index] + temp;
