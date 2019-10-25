@@ -1,5 +1,5 @@
 INCLIST = -I../include  
-
+CXX=g++
 CFLAGS= -g -O2 -O2 -msse -msse2 -msse3
 CXXFLAGS=  -g -O2 -msse -msse2 -msse3
 ASFLAGS= 
