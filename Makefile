@@ -48,7 +48,7 @@ OBJS := $(notdir $(OBJS_SRC))
 
 
 
-.C.x:$(LIBLIST) 
+.C.x:$(CCSRC:.C=.o)
 	make -C src
 	$(CXX) -c $^ $(CXXFLAGS) $(LDFLAGS) $(INCLIST)
 	@echo OBJS = $(OBJS_SRC)

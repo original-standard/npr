@@ -54,7 +54,7 @@ NPR :: NPR(int argc, char *argv[])
     sprintf(lat_fname,"%s.%d",conf_file,loop) ;
 
     ifstream in(lat_fname);
-    printf("reading %s ...\n",lat_fname);
+    //    printf("reading %s ...\n",lat_fname);
     std::string buf;
     char status = 0; // 0 , 1 standby, 2 reading                                                                                    
     int x[4];
@@ -129,7 +129,8 @@ NPR :: NPR(int argc, char *argv[])
 			wilsonmatrix temp(0.);
 			if(flag){
 			  temp.element(a,b,c,d,complex<double>(r  * 2 / (5.-1.8) ,i  * 2 / (5.-1.8)));
-			  WS_l[index] = WS_l[index] + temp;
+			  //			  WS_l[index] = WS_l[index] + temp;
+			  WS_l[index] += temp;
 			}
 		      }
 
