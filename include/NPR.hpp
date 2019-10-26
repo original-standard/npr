@@ -35,7 +35,7 @@ private:
 public:
   NPR(int,char **);
   ~NPR(){};
-  // std::vector<std::vector<int>> axial2_sub(std::vector<std::vector<std::complex>> &);
+  std::vector<std::vector<int>> vectors_sub(std::vector<std::vector<std::complex<double>>> &);
   // std::vector<std::vector<int>> stensor_sub(std::vector<std::vector<std::complex>> &);
   // std::vector<std::vector<int>> sscalar_sub(std::vector<std::vector<std::complex>> &);
 };

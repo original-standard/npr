@@ -1,0 +1,5 @@
+./main.x file start end skip
+
+e.g.
+
+./main.x NPR_der_dat 5060 5120 20

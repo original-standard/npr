@@ -1,4 +1,7 @@
 
+
+#ifndef _OPERATOR_OVERLOADS__H__
+#define _OPERATOR_OVERLOADS__H__
 #include<iostream>
 #include<algorithm>
 #include<map>
@@ -127,4 +130,22 @@ std::vector<T> operator/(const std::vector<T>& a,const std::vector<T>& b)
   return temp;
 }
 
+  template <typename T>
+  std::complex<T> operator*(const std::complex<T>& a, const int b)
+  {
+    std::complex<T> tmp(a.real() * b,a.imag() * b);
+    return tmp;
+  }
+
+
+    template <typename T>
+  std::complex<T> operator/(const std::complex<T>& a, const int b)
+  {
+    std::complex<T> tmp(a.real() / b,a.imag() / b);
+    return tmp;
+  }
+
+
 }
+
+#endif

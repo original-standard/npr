@@ -3,7 +3,7 @@
 #define _WILSONMATRIX_H
 
 #include <complex>
-
+#include "gamma_matrix.hpp"
 #include <iostream>
 using std::complex;
 
@@ -132,13 +132,14 @@ public:
     return mat;
   }
 
-    wilsonmatrix operator+ (wilsonmatrix &obj)
+    wilsonmatrix operator+ (const wilsonmatrix &obj) const
   {
 
     wilsonmatrix mat(*this);
+    wilsonmatrix copy(obj);
 
     auto lhs = mat.ret_data();
-    auto dat = obj.ret_data();
+    auto dat = copy.ret_data();
     for(int i = 0;i < 12;i++) // thread safe ?
       for(int k = 0;k < 12; k++) // thread safe ?
 	  lhs[i + k * 12] += dat[i + k * 12];
@@ -177,6 +178,56 @@ public:
     return mat;
   }
 
-  
+
+
+  // multiply
+
+  void gr(int dir) // B = A * GAMMA_dir
+  {
+    
+    auto A = rawdata;
+    complex<double> * matrix = new complex<double>[16];
+    complex<double> * B = new complex<double>[144];
+    for(int i = 0;i < 16;i++)
+      matrix[i] = complex<double>(gamma_matrix[dir][0][i], gamma_matrix[dir][0][i]);
+    for(int i = 0;i < 12;i++) // thread safe ?
+      for(int k = 0;k < 12; k++) // thread safe ?
+	for(int a = 0;a < 12;a++) // ???
+	  B[i + k * 12] += A[i + a * 12] * matrix[a % 3 + (k % 3) * 4];
+    
+  }
+
+  void gl(int dir) // B = GAMMA_dir * A
+  {
+    
+    auto A = rawdata;
+    complex<double> * matrix = new complex<double>[16];
+    complex<double> * B = new complex<double>[144];
+    for(int i = 0;i < 16;i++)
+      matrix[i] = complex<double>(gamma_matrix[dir][0][i], gamma_matrix[dir][0][i]);
+    for(int i = 0;i < 12;i++) // thread safe ?
+      for(int k = 0;k < 12; k++) // thread safe ?
+	for(int a = 0;a < 12;a++) // ???
+	  B[i + k * 12] += matrix[i % 3 + (a % 3) * 4] * A[a + k * 12];
+    
+  }
+
+  complex<double> Trace(void)
+  {
+    complex<double> ret(0.,0.);
+    for(int i = 0;i < 12;i++)
+      ret += rawdata[i + i * 12];
+    return ret;
+  }
 };
+
+
+
+
+
+
+
+
+
+
 #endif
