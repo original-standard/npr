@@ -1,6 +1,7 @@
 #include "NPR.hpp"
 
-using std::vector,std::map;
+using std::vector;
+using std::map;
 
 
 vector<vector<int>> NPR::vectors_sub(vector<vector<complex<double>>> &prop){

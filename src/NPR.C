@@ -2,11 +2,16 @@
 #include "NPR.hpp"
 #include <iostream>
 
-using std::cout,std::endl;
+using std::cout;
+using std::endl;
 
-using std::vector,std::map,Eigen::MatrixXcd;
+using std::vector;
+using std::map;
+using Eigen::MatrixXcd;
 
-using std::ifstream,std::stringstream,std::string;
+using std::ifstream;
+using std::stringstream;
+using std::string;
 NPR :: NPR(int argc, char *argv[])
   : mom(16) {
   n_src = 1;
@@ -44,7 +49,7 @@ NPR :: NPR(int argc, char *argv[])
     volume_inv[i] = V / (volume[i] / V_inv);
   }
   V *= V_inv;
-  //  V *= V_inv;
+
 
   for(int loop=loop_s; loop<=loop_e; loop+=loop_skp){
 

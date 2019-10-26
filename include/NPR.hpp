@@ -35,6 +35,7 @@ private:
 public:
   NPR(int,char **);
   ~NPR(){};
+  int inline ret_V(){return V;};
   std::vector<std::vector<int>> vectors_sub(std::vector<std::vector<std::complex<double>>> &);
   std::vector<std::vector<int>> axials_sub(std::vector<std::vector<std::complex<double>>> &);
   // std::vector<std::vector<int>> stensor_sub(std::vector<std::vector<std::complex>> &);

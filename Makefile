@@ -1,28 +1,11 @@
-# $Id: Makefile.users.in,v 1.6 2011/03/24 16:20:52 chulwoo Exp $
-# Makefile.users.  Generated from Makefile.users.in by configure.
-#   This is the makefile for all the commands
-#   that are common for all testing applications.
-#----------------------------------------------------------------------
 
-
-
-
-#
-# include list for the Columbia code
-#
 INCLIST = -I./include 
 
 CXX=g++
-CFLAGS= -g -O2 -O2 -msse -msse2 -msse3
-CXXFLAGS= -g -O2 -msse -msse2 -msse3 ${INCLIST}
+CFLAGS= -O2 -msse -msse2 -msse3
+CXXFLAGS= -O2 -msse -msse2 -msse3 ${INCLIST}
 ASFLAGS= 
 
-#
-# Libraries for the Columbia code
-#
-# (These are for the scalar version of the code)
-#
-#
 
 
 LIBLIST = $(wildcard src/*.C)

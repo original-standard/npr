@@ -1,12 +1,15 @@
 
 #include "NPR.hpp"
 
-using namespace std;
+using std::cout;
+using std::endl;
+using std::vector;
+using std::complex;
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
   NPR npr(argc,argv);
-  int V = 12;//npr.ret_V();
+  int V = npr.ret_V();
 
   vector<vector<complex<double>>> vec;
   auto mom = npr.vectors_sub(vec);
@@ -41,5 +44,6 @@ main(int argc,char *argv[])
 	cout << " " << vec[j][i].real() << " " << Dev[j] << endl;
 	
       }
-  //wmat.resize(0);
+
+  return 0;
 }

@@ -1,9 +1,8 @@
 INCLIST = -I../include  
 CXX=g++
-CFLAGS= -g -O2 -O2 -msse -msse2 -msse3
-CXXFLAGS=  -g -O2 -msse -msse2 -msse3
+CFLAGS=  -O2 -O2 -msse -msse2 -msse3
+CXXFLAGS=   -O2 -msse -msse2 -msse3
 ASFLAGS= 
-DFLAGS +=  -DUSE_SSE -DUSE_QMP -DUSE_QIO
 
 
 
