@@ -3,7 +3,7 @@ INCLIST = -I./include
 
 CXX=g++
 CFLAGS= -O2 -msse -msse2 -msse3
-CXXFLAGS= -O2 -msse -msse2 -msse3 ${INCLIST}
+CXXFLAGS= -O2 -msse -msse2 -msse3 ${INCLIST} 
 ASFLAGS= 
 
 

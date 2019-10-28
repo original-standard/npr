@@ -9,11 +9,11 @@ using std::complex;
 
 class wilsonmatrix{
 private:
-	std::complex<double> * rawdata;
+  std::complex<double> * rawdata;
 public:
   void destruction() // Do not call this function !
   {
-	rawdata = nullptr;
+    rawdata = nullptr;
   }
   
   inline std::complex<double> * ret_data(){
@@ -24,16 +24,23 @@ public:
     return rawdata[i];
   }
 
+  inline complex<double> operator()(int d, int c, int d2, int c2) const
+  {
+    return  rawdata[d + 4 * c + (4 * 3) * d2 + (4 * 3 * 4) * c2];
+  }
 
-  //constrcutor
+  inline void element(int d,int c,int d2, int c2, complex<double> C)
+  {
+    rawdata[d + 4 * c + (4 * 3) * d2 + (4 * 3 * 4) * c2] = C;
+  }
   
-  wilsonmatrix(wilsonmatrix && wmat) //move
+  wilsonmatrix(wilsonmatrix && wmat) 
   {
     rawdata = wmat.ret_data();
     wmat.destruction();
   }
 
-  wilsonmatrix(wilsonmatrix & wmat) //copy 
+  wilsonmatrix(wilsonmatrix & wmat)
   {
     rawdata = new complex<double>[144];
     auto dat = wmat.ret_data();
@@ -42,7 +49,7 @@ public:
   }
 
 
-  wilsonmatrix(const wilsonmatrix & wmat) //copy
+  wilsonmatrix(const wilsonmatrix & wmat) 
   {
 
     rawdata = new complex<double>[144];
@@ -51,7 +58,7 @@ public:
   }
 
 
-  wilsonmatrix(){ //default
+  wilsonmatrix(){ 
     rawdata = new complex<double>[144];
   }
 
@@ -72,30 +79,21 @@ public:
     for(int j = 0;j < 144;j++)
       rawdata[j] = *(c+j);
   }
-  
+
+
+  virtual ~wilsonmatrix(){
+    delete[] rawdata;
+  }
+
   wilsonmatrix operator=(wilsonmatrix wmat) 
   {
     rawdata = new complex<double>[144];
     auto dat = wmat.ret_data();
     for(int j = 0;j < 144;j++)
       rawdata[j] = *(dat+j);
-    return wmat;
-  }
-  
-
-  
-  virtual ~wilsonmatrix(){
-    delete[] rawdata;
-  }
-  void element(int d,int c,int d2, int c2, complex<double> C)
-  {
-    rawdata[d + 4 * c + 12 * d2 + 48 * c2] = C;
+    return *this;
   }
 
-  inline complex<double> operator()(int d, int c, int d2, int c2) const
-  {
-    return  rawdata[d + 4 * c + 12 * d2 + 48 * c2];
-  }
   
   void conj(void)
   {
@@ -108,17 +106,17 @@ public:
   //operator overloads
 
   
-  wilsonmatrix operator* ( wilsonmatrix &obj) const
+  wilsonmatrix operator* (wilsonmatrix &obj) const
   {
     wilsonmatrix mat(0.);
 
     auto copy(*this);
-    auto lhs = mat.ret_data();
+    auto T = mat.ret_data();
     auto dat = obj.ret_data();
     for(int i = 0;i < 12;i++) // thread safe ?
       for(int k = 0;k < 12; k++) // thread safe ?
 	for(int a = 0;a < 12;a++) // ???
-	  lhs[i + k * 12] += rawdata[i + a * 12] * dat[a + k * 12];
+	  T[i + k * 12] += rawdata[i + a * 12] * dat[a + k * 12];
        
       
     return mat;
@@ -130,65 +128,65 @@ public:
 
     wilsonmatrix mat(*this);
     wilsonmatrix copy(obj);
-    auto lhs = mat.ret_data();
+    auto T = mat.ret_data();
     auto dat = copy.ret_data();
     for(int i = 0;i < 12;i++) // thread safe ?
       for(int k = 0;k < 12; k++) // thread safe ?
-	  lhs[i + k * 12]  -= dat[i + k * 12];
-             
+	T[i + k * 12]  -= dat[i + k * 12];
+    
     return mat;
   }
-
-    wilsonmatrix operator+ (const wilsonmatrix &obj) const
+  
+  wilsonmatrix operator+ (const wilsonmatrix &obj) const
   {
-
+    
     wilsonmatrix mat(*this);
     wilsonmatrix copy(obj);
-
-    auto lhs = mat.ret_data();
+    
+    auto T = mat.ret_data();
     auto dat = copy.ret_data();
     for(int i = 0;i < 12;i++) // thread safe ?
       for(int k = 0;k < 12; k++) // thread safe ?
-	  lhs[i + k * 12] += dat[i + k * 12];
-       
-      
+	T[i + k * 12] += dat[i + k * 12];
+    
+    
     return mat;
   }
-
-
+  
+  
   wilsonmatrix operator+= (wilsonmatrix &obj)
   {
-
-
-
-    auto lhs = rawdata;
+    
+    
+    
+    auto T = rawdata;
     auto dat = obj.ret_data();
     for(int i = 0;i < 12;i++) // thread safe ?
       for(int k = 0;k < 12; k++) // thread safe ?
-	  lhs[i + k * 12] += dat[i + k * 12];
-       
-      
+	T[i + k * 12] += dat[i + k * 12];
+    
+    
     return *this;
   }
-
-
+  
+  
   wilsonmatrix operator* (const double scalar) const
   {
-
+    
     wilsonmatrix mat(*this);
-    auto lhs = mat.ret_data();
+    auto T = mat.ret_data();
     for(int i = 0;i < 12;i++) // thread safe ?
       for(int k = 0;k < 12; k++) // thread safe ?
-	lhs[i + k * 12] *= scalar;
-       
-      
+	T[i + k * 12] *= scalar;
+    
+    
     return mat;
   }
-
-
-
+  
+  
+  
   // multiply
-
+  
   void gr(int dir) // B = A * GAMMA_dir
   {
     
@@ -199,23 +197,23 @@ public:
       matrix[i] = complex<double>(gamma_matrix[dir][0][i], gamma_matrix[dir][1][i]);
     for(int i = 0;i < 12;i++) // thread safe ?
       for(int k = 0;k < 12; k++) // thread safe ?
-	/*
+	
 	for(int a = 0;a < 12;a++)
 	  {
 	    if((a / 4) == (k / 4))
 	      B[i + k * 12] += A[i + a * 12] * matrix[(a % 4) + (k % 4) * 4];
-	      }
-	*/
-	for(int a = 0;a < 4;a++)
-	{
-	  int temp = k / 4;
-	  B[i + k * 12] += A[i + (temp + a) * 12] * matrix[a + (k % 4) * 4]; 
-	}
+	  }
+    
+    //	for(int a = 0;a < 4;a++)
+    //	{
+    //  int temp = k / 4;
+    //  B[i + k * 12] += A[i + (temp + a) * 12] * matrix[a + (k % 4) * 4]; 
+	//}
     delete[] rawdata;
     delete[] matrix;
     rawdata = B;
   }
-
+  
   void gl(int dir) // B = GAMMA_dir * A
   {
     
@@ -226,23 +224,24 @@ public:
       matrix[i] = complex<double>(gamma_matrix[dir][0][i], gamma_matrix[dir][1][i]);
     for(int i = 0;i < 12;i++) // thread safe ?
       for(int k = 0;k < 12; k++) // thread safe ?
-	/*
+	
 	for(int a = 0;a < 12;a++)
 	  {
 	    if((a / 4) == (i / 4))
-	       B[i + k * 12] += matrix[i % 4 + (a % 4) * 4] * A[a + k * 12];
+	      B[i + k * 12] += matrix[i % 4 + (a % 4) * 4] * A[a + k * 12];
 	  }
-	*/
-	for(int a = 0;a < 4;a++) // ???
-	  {
-	    int temp = i / 4;
-	    B[i + k * 12] += matrix[i % 4 + a * 4] * A[a + (temp) + k * 12];
-	  }
+    /*
+      for(int a = 0;a < 4;a++) // ???
+      {
+      int temp = i / 4;
+      B[i + k * 12] += matrix[i % 4 + a * 4] * A[a + (temp) + k * 12];
+      }
+    */
     delete[] rawdata;
     delete[] matrix;
     rawdata = B;
   }
-
+  
   complex<double> Trace(void)
   {
     complex<double> ret(0.,0.);
@@ -251,14 +250,6 @@ public:
     return ret;
   }
 };
-
-
-
-
-
-
-
-
 
 
 #endif

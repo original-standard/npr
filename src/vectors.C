@@ -60,7 +60,7 @@ continue;
 
 		    gamma.conj();
 
-		    gamma.gr(5);
+		    		    gamma.gr(5);
 		    gamma.gl(5);
 		    //		    gamma.gl(-5);
 		    gamma.gl(dir1); //operator
