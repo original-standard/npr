@@ -197,18 +197,18 @@ public:
       matrix[i] = complex<double>(gamma_matrix[dir][0][i], gamma_matrix[dir][1][i]);
     for(int i = 0;i < 12;i++) // thread safe ?
       for(int k = 0;k < 12; k++) // thread safe ?
-	
+	/*	
 	for(int a = 0;a < 12;a++)
-	  {
-	    if((a / 4) == (k / 4))
-	      B[i + k * 12] += A[i + a * 12] * matrix[(a % 4) + (k % 4) * 4];
-	  }
-    
-    //	for(int a = 0;a < 4;a++)
-    //	{
-    //  int temp = k / 4;
-    //  B[i + k * 12] += A[i + (temp + a) * 12] * matrix[a + (k % 4) * 4]; 
-	//}
+	{
+	if((a / 4) == (k / 4))
+	B[i + k * 12] += A[i + a * 12] * matrix[(a % 4) + (k % 4) * 4];
+	}
+	*/
+    	for(int a = 0;a < 4;a++)
+    	{
+	  int temp =  (k & 3); 
+	  B[i + k * 12] += A[i + (k - temp + a) * 12] * matrix[a + temp * 4]; 
+	}
     delete[] rawdata;
     delete[] matrix;
     rawdata = B;
@@ -224,19 +224,19 @@ public:
       matrix[i] = complex<double>(gamma_matrix[dir][0][i], gamma_matrix[dir][1][i]);
     for(int i = 0;i < 12;i++) // thread safe ?
       for(int k = 0;k < 12; k++) // thread safe ?
-	
+	/*
 	for(int a = 0;a < 12;a++)
+	{
+	if((a / 4) == (i / 4))
+	B[i + k * 12] += matrix[i % 4 + (a % 4) * 4] * A[a + k * 12];
+	}
+	*/
+	for(int a = 0;a < 4;a++) // ???
 	  {
-	    if((a / 4) == (i / 4))
-	      B[i + k * 12] += matrix[i % 4 + (a % 4) * 4] * A[a + k * 12];
+	    int temp = (i & 3);
+	    B[i + k * 12] += matrix[(temp) + a * 4] * A[a + (i - temp) + k * 12];
 	  }
-    /*
-      for(int a = 0;a < 4;a++) // ???
-      {
-      int temp = i / 4;
-      B[i + k * 12] += matrix[i % 4 + a * 4] * A[a + (temp) + k * 12];
-      }
-    */
+
     delete[] rawdata;
     delete[] matrix;
     rawdata = B;
