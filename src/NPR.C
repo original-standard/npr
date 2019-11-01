@@ -1,4 +1,3 @@
-
 #include "NPR.hpp"
 #include <iostream>
 
@@ -86,7 +85,7 @@ NPR :: NPR(int argc, char *argv[])
                 int index = 0;
                 for(int i = 0;i < 4;i++)
                   index = index * (2 * mom + 1) + p[3 - i] + mom;
-		auto dot = [](auto *p1,auto *p2) -> double
+		auto dot = [](double *p1,double *p2) -> double
 		  {
 		    double prod = 0.;
 		    for(int i = 0; i < 4;i++){
@@ -107,12 +106,13 @@ NPR :: NPR(int argc, char *argv[])
 		
 		char flag = 0;
 		flag = 1; // always pass
+		double p_[] = {(double)p[0],(double)p[1],(double)p[2],(double)p[3]};
 		for(int j = 0;j < 8;j++){
-		  auto prod = dot(p,elements[j]);
+		  auto prod = dot(p_,elements[j]);
 		  double q[4];
 		  for(int i = 0;i < 4;i++)
 		    q[i] = p[i] - prod * elements[j][i];
-		  if(dot(q,q) / dot(p,p)   < .5){
+		  if(dot(q,q) / dot(p_,p_)   < .5){
 		    flag = 1;
 		    //		    for(int i = 0;i < 4;i++)
 		      //		      std::cout << p[i] << " ";
