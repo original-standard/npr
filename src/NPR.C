@@ -83,7 +83,7 @@ NPR :: NPR(int argc, char *argv[])
             {
               status = 2;
               for(int i = 0;i < 4;i++){
-                line >> buf >> p[i];
+                line >> p[i];
 		//		std::cout << p[i] << std::endl;
 	      }
                 int index = 0;
@@ -109,14 +109,16 @@ NPR :: NPR(int argc, char *argv[])
 		}; 
 		
 		char flag = 0;
+#ifndef WILSON
 		flag = 1; // always pass
+#endif
 		double p_[] = {(double)p[0],(double)p[1],(double)p[2],(double)p[3]};
 		for(int j = 0;j < 8;j++){
 		  auto prod = dot(p_,elements[j]);
 		  double q[4];
 		  for(int i = 0;i < 4;i++)
 		    q[i] = p[i] - prod * elements[j][i];
-		  if(dot(q,q) / dot(p_,p_)   < .5){
+		  if(dot(q,q) / dot(p_,p_)   < 1.5){
 		    flag = 1;
 		    //		    for(int i = 0;i < 4;i++)
 		      //		      std::cout << p[i] << " ";
