@@ -48,10 +48,11 @@ public:
   NPR(int,char **);
   ~NPR(){};
   int inline ret_V(){return V;};
-  std::vector<std::vector<int>> vectors_sub(std::vector<std::vector<std::complex<double>>> &);
-  std::vector<std::vector<int>>  axials_sub(std::vector<std::vector<std::complex<double>>> &);
+  std::vector<std::vector<int>>     vectors_sub(std::vector<std::vector<std::complex<double>>> &);
+  std::vector<std::vector<int>>      axials_sub(std::vector<std::vector<std::complex<double>>> &);
+  std::vector<std::vector<int>>  threequark_sub(std::vector<std::vector<std::complex<double>>> &);
   // std::vector<std::vector<int>> stensor_sub(std::vector<std::vector<std::complex>> &);
-  std::vector<std::vector<int>> sscalar_sub(std::vector<std::vector<std::complex<double>>> &);
+  std::vector<std::vector<int>>     sscalar_sub(std::vector<std::vector<std::complex<double>>> &);
 };
 
 #endif

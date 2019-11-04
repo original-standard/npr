@@ -40,21 +40,13 @@ public:
     wmat.destruction();
   }
 
-  wilsonmatrix(wilsonmatrix & wmat)
-  {
-    rawdata = new complex<double>[144];
-    auto dat = wmat.ret_data();
-    for(int j = 0;j < 144;j++)
-      rawdata[j] = *(dat+j);
-  }
-
 
   wilsonmatrix(const wilsonmatrix & wmat) 
   {
 
     rawdata = new complex<double>[144];
     for(int j = 0;j < 144;j++)
-      rawdata[j] = wmat.ret_data_const(j);
+      rawdata[j] = wmat.rawdata[j];
   }
 
 
