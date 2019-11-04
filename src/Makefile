@@ -1,7 +1,7 @@
 INCLIST = -I../include  
 CXX=g++
 CFLAGS=  -O2 -O2 -msse -msse2 -msse3
-CXXFLAGS=   -O2 -msse -msse2 -msse3 -D_X_SITES=24 -D_Y_SITES=24 -D_Z_SITES=24 -D_T_SITES=64
+CXXFLAGS=   -O2 -msse -msse2 -msse3 -D_X_SITES=64 -D_Y_SITES=64 -D_Z_SITES=64 -D_T_SITES=64 -DWILSON
 ASFLAGS= 
 
 

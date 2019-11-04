@@ -75,11 +75,15 @@ NPR :: NPR(int argc, char *argv[])
           if(!buf.compare("Cg")){
             status = 0;
           }
-          if(!buf.compare("Fourier"))
+#ifdef WILSON
+          if(!buf.compare("MOMENTUM="))
+#else
+	  if(!buf.compare("Fourier"))
+#endif
             {
               status = 2;
               for(int i = 0;i < 4;i++){
-                line >> buf >> p[i];
+                line >> p[i];
 		//		std::cout << p[i] << std::endl;
 	      }
                 int index = 0;
@@ -105,14 +109,16 @@ NPR :: NPR(int argc, char *argv[])
 		}; 
 		
 		char flag = 0;
+#ifndef WILSON
 		flag = 1; // always pass
+#endif
 		double p_[] = {(double)p[0],(double)p[1],(double)p[2],(double)p[3]};
 		for(int j = 0;j < 8;j++){
 		  auto prod = dot(p_,elements[j]);
 		  double q[4];
 		  for(int i = 0;i < 4;i++)
 		    q[i] = p[i] - prod * elements[j][i];
-		  if(dot(q,q) / dot(p_,p_)   < .5){
+		  if(dot(q,q) / dot(p_,p_)   < 1.5){
 		    flag = 1;
 		    //		    for(int i = 0;i < 4;i++)
 		      //		      std::cout << p[i] << " ";
@@ -130,10 +136,18 @@ NPR :: NPR(int argc, char *argv[])
                         stringstream line(buf);
 			double r,i;
 			int a,b,c,d;
+#ifdef WILSON
+			line >> r >> i;
+#else
 			line >> a >> b >> c >> d >> r >> i;
+#endif
 			wilsonmatrix temp(0.);
 			if(flag){
+#ifdef WILSON
+			  temp.element(s1,c1,s2,c2,complex<double>(r  * 0.126117 * 2.,i  * 0.126117 * 2. ));
+#else
 			  temp.element(a,b,c,d,complex<double>(r  * 2 / (5.-1.8) ,i  * 2 / (5.-1.8)));
+#endif
 			  //			  WS_l[index] = WS_l[index] + temp;
 			  WS_l[index] += temp;
 			}
