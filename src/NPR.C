@@ -75,7 +75,11 @@ NPR :: NPR(int argc, char *argv[])
           if(!buf.compare("Cg")){
             status = 0;
           }
-          if(!buf.compare("Fourier"))
+#ifdef WILSON
+          if(!buf.compare("MOMENTUM="))
+#else
+	  if(!buf.compare("Fourier"))
+#endif
             {
               status = 2;
               for(int i = 0;i < 4;i++){
@@ -130,10 +134,18 @@ NPR :: NPR(int argc, char *argv[])
                         stringstream line(buf);
 			double r,i;
 			int a,b,c,d;
+#ifdef WILSON
+			line >> r >> i;
+#else
 			line >> a >> b >> c >> d >> r >> i;
+#endif
 			wilsonmatrix temp(0.);
 			if(flag){
+#ifdef WILSON
+			  temp.element(s1,c1,s2,c2,complex<double>(r  * 0.126117 * 2.,i  * 0.126117 * 2. ));
+#else
 			  temp.element(a,b,c,d,complex<double>(r  * 2 / (5.-1.8) ,i  * 2 / (5.-1.8)));
+#endif
 			  //			  WS_l[index] = WS_l[index] + temp;
 			  WS_l[index] += temp;
 			}
