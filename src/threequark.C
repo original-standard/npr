@@ -87,35 +87,68 @@ vector<vector<int>> NPR::threequark_sub(vector<vector<complex<double>>> &prop){
 	continue;
       {
 	vector<cd> X(loop_N,cd(0.,0.));
-	vector<vector<vector<vector<cd>>>> P(loop_N,vector<vector<vector<cd>>>(12,vector<vector<cd>>(12,vector<cd>(12,(0.,0.)))));
-	vector<vector<vector<cd>>> median(12,vector<vector<cd>>(12,vector<cd>(12,cd(0.,0.))));
+	vector<vector<cd>> P(loop_N,vector<cd>(12 * 12 * 12,(0.,0.)));
+	vector<cd> median(12 * 12 * 12,cd(0.,0.));
 	auto G1 = gamma_t * gamma_y * gamma_5;
+	auto G2 = gamma_5 * gamma_5;
 	for (int i = 0;i < loop_N;i++)
 	  {
 	    auto &R = P[i];
 	    
-	    for(int c4 = 0;c4 < 6;c4++)
-	      for(int c1 = 0;c1 < 3;c1++)
-		for(int c2 = 0;c2 < 3;c2++)
-		  for(int c3 = 0;c3 < 3;c3++)
+	   
+	    //	  for(int c1 = 0;c1 < 3;c1++)
+	    //	  for(int c2 = 0;c2 < 3;c2++)
+	    //	  for(int c3 = 0;c3 < 3;c3++)
+	    
+
+
+
+#pragma omp parallel for
+	    for(int color_spin = 0;color_spin < 3 * 3 * 3 * 4 * 4 * 4;color_spin++)
+	      {
+		int color = color_spin / (4 * 4 * 4);
+		int c1 = color % 3;
+		int c2 = (color / 3) % 3;
+		int c3 = (color / (3 * 3)) % 3;
+		int spin = color_spin % (4 * 4 * 4);
+		
+		int a = spin % 4;
+		int b = (spin / 4) % 4;
+		int c = (spin / (4 * 4)) % 4;				   
+		auto prop = wmato[j][i];
+		//for(int a = 0;a < 4;a++)
+		//for(int b = 0;b < 4;b++)
+		//	  for(int c = 0;c < 4;c++)
+		//		      for(int spin1 = 0; spin1 < 4 * 4 * 4;spin1++)
+		//		cd G1lhs = cd(G1(a,b).real(),G1(a,b).imag());
+		//if(abs(G1lhs) == 0)
+		//  continue;
+		//		if(abs(G1rhs) == 0)
+		//  continue;
+		for(int m = 0;m < 4;m++)
+		  for(int n = 0;n < 4;n++)
 		    {
-		      auto prop = wmato[j][i];
-		      for(int a = 0;a < 4;a++)
-			for(int b = 0;b < 4;b++)
-			  for(int c = 0;c < 4;c++)
-			    for(int m = 0;m < 4;m++)
-			      for(int n = 0;n < 4;n++)
-				for(int x = 0;x < 4;x++)
-				  {
-				    cd p1 = prop(a,c1,m,color_in[c4][0]);
-				    cd p2 = prop(b,c2,n,color_in[c4][1]);
-				    cd p3 = prop(c,c3,x,color_in[c4][2]);
-				    cd G1lhs = cd(G1(a,b).real(),G1(a,b).imag());
-				    cd G1rhs = cd(G1(m,n).real(),G1(m,n).imag());
-				    //R = R + p1 * p2 * G1lhs * G1rhs / 3.;
-				    R[c1 * 4 + a][c2 * 4 + b][c3 * 4 + c] = R[c1 * 4 + a][c2 * 4 + b][c3 * 4 + c] + p1 * p2 * p3 * G1rhs;
-				  }
+		      cd G1rhs = cd(G1(m,n).real(),G1(m,n).imag());
+		      if(abs(G1rhs) == 0)
+		        continue;
+		      
+		      for(int x = 0;x < 4;x++)
+			for(int d = 0;d < 4;d++)
+			for(int c4 = 0;c4 < 6;c4++)
+			  {
+			    cd G2rhs = cd(G2(x,d).real(),G2(x,d).imag());
+			    if(abs(G2rhs) == 0)
+			      continue;
+			    cd p1 = prop(a,c1,m,color_in[c4][0]);
+			    cd p2 = prop(b,c2,n,color_in[c4][1]);
+			    cd p3 = prop(c,c3,x,color_in[c4][2]);
+			    
+			    //R = R + p1 * p2 * G1lhs * G1rhs / 3.;
+			    R[c1 * 4 + a + (c2 * 4 + b) * 12 + (c3 * 4 + c) * 12 * 12] =
+			      R[c1 * 4 + a + (c2 * 4 + b) * 12 + (c3 * 4 + c) * 12 * 12] + p1 * p2 * p3 * G1rhs * G2rhs;
+			  }
 		    }
+	      }
 	    median = median + R;
 	  }
 	
@@ -123,34 +156,44 @@ vector<vector<int>> NPR::threequark_sub(vector<vector<complex<double>>> &prop){
 		   
 	median = median * (1. /  loop_N);
 	std::transform(P.begin(),P.end(),P.begin(),
-		       Jackknife<vector<vector<vector<cd>>>>(loop_N,median));
-	
+		       Jackknife<vector<cd>>(loop_N,median));
+
+
+
+#pragma omp parallel for
 	for (int i = 0;i < loop_N;i++)
 	  {
 	    auto &R = P[i];
-	    for(int c4 = 0;c4 < 6;c4++)
-	      for(int c1 = 0;c1 < 3;c1++)
-		for(int c2 = 0;c2 < 3;c2++)
-		  for(int c3 = 0;c3 < 3;c3++)
+	    auto prop = wmati[j][i];
+
+	    for(int a = 0;a < 4;a++)
+	      for(int b = 0;b < 4;b++)
+		for(int m = 0;m < 4;m++)
+		  for(int n = 0;n < 4;n++)
 		    {
-		      auto prop = wmati[j][i];
-		      for(int a = 0;a < 4;a++)
-			for(int b = 0;b < 4;b++)
-			  for(int c = 0;c < 4;c++)
-			    for(int m = 0;m < 4;m++)
-			      for(int n = 0;n < 4;n++)
+
+		      cd G1rhs = cd(G1(m,n).real(),G1(m,n).imag());
+		      //if(abs(G1lhs) == 0)
+		      //	continue;
+		      if(abs(G1rhs) == 0)
+			continue;
+		      for(int c4 = 0;c4 < 6;c4++)
+			for(int c1 = 0;c1 < 3;c1++)
+			  for(int c2 = 0;c2 < 3;c2++)
+			    {
+			      cd p1 = prop(m,color_in[c4][0],a,c1);
+			      cd p2 = prop(n,color_in[c4][1],b,c2);
+			      for(int c3 = 0;c3 < 3;c3++)
 				for(int x = 0;x < 4;x++)
-		      		  {
-				    //cd p1 = prop(a,c1,n,c3);
-				    cd p1 = prop(m,color_in[c4][0],a,c1);
-				    cd p2 = prop(n,color_in[c4][1],b,c2);
-				    cd p3 = prop(x,color_in[c4][2],c,c3);
-				    cd G1lhs = cd(G1(a,b).real(),G1(a,b).imag());
-				    cd G1rhs = cd(G1(m,n).real(),G1(m,n).imag());
-				    //			    cd p2 = prop2(n,c3,b,c2);
-				    X[i] = X[i] + R[c1 * 4 + a][c2 * 4 + b][c3 * 4 + c] * p1 * p2 * p3 *  G1rhs / 96.;
-				    //X[i] = X[i] + prop2(a,c1,n,c3) * wmato[j][i](a,c1,n,c3);
-				  }
+				  for(int c = 0;c < 4;c++)
+				    for(int d = 0;d < 4;d++)
+				    {
+				      cd G2rhs = cd(G2(x,d).real(),G2(x,d).imag());
+				      cd p3 = prop(x,color_in[c4][2],c,c3);
+				      X[i] = X[i] + R[c1 * 4 + a + (c2 * 4 + b) * 12 + (c3 * 4 + c) * 12 * 12] * p1 * p2 * p3 *  G1rhs * G2rhs / 96.;
+				      //X[i] = X[i] + prop2(a,c1,n,c3) * wmato[j][i](a,c1,n,c3);
+				    }
+			    }
 		    }
 	  }
 	prop.push_back(X);

@@ -83,7 +83,11 @@ NPR :: NPR(int argc, char *argv[])
             {
               status = 2;
               for(int i = 0;i < 4;i++){
+#ifdef WILSON
                 line >> p[i];
+#else
+		line >> buf >> p[i];
+#endif
 		//		std::cout << p[i] << std::endl;
 	      }
                 int index = 0;
