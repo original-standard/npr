@@ -3,7 +3,7 @@
 using std::vector,std::map;
 using Eigen::Matrix4cd;
 typedef std::complex<double> cd;
-vector<vector<int>> NPR::threequark_sub(vector<vector<complex<double>>> &prop){
+vector<vector<int>> NPR::threequark_sub(vector<vector<complex<double>>> &prop,int op1, int op2){
   
   //void NPR::threequark_sub(map<unsigned int,vector<cd>> &prop){
 
@@ -34,10 +34,10 @@ vector<vector<int>> NPR::threequark_sub(vector<vector<complex<double>>> &prop){
     ,cd(0,0) , cd(1,0) , cd(0,0) , cd(0,0);
 
   Matrix4cd gamma_5;
-  gamma_5 << cd(1,0) , cd(0,0) , cd(0,0) , cd(0,0)
-    ,cd(0,0) , cd(1,0) , cd(0,0) , cd(0,0)
-    ,cd(0,0) , cd(0,0) , cd(-1,0) , cd(0,0)
-    ,cd(0,0) , cd(0,0) , cd(0,0) , cd(-1,0);
+  gamma_5 << cd(0,0) , cd(0,0) , cd(1,0) , cd(0,0)
+    ,cd(0,0) , cd(0,0) , cd(0,0) , cd(1,0)
+    ,cd(1,0) , cd(0,0) , cd(0,0) , cd(0,0)
+    ,cd(0,0) , cd(1,0) , cd(0,0) , cd(0,0);
   vector<vector<int>> prop_n;
   for(auto &mom1 : wmat)
     {
@@ -89,8 +89,64 @@ vector<vector<int>> NPR::threequark_sub(vector<vector<complex<double>>> &prop){
 	vector<cd> X(loop_N,cd(0.,0.));
 	vector<vector<cd>> P(loop_N,vector<cd>(12 * 12 * 12,(0.,0.)));
 	vector<cd> median(12 * 12 * 12,cd(0.,0.));
-	auto G1 = gamma_t * gamma_y * gamma_5;
-	auto G2 = gamma_5 * gamma_5;
+
+	Matrix4cd G1 = gamma_5 * gamma_5;
+	Matrix4cd G2 = gamma_5 * gamma_5;
+	switch (op1 % 7){
+	case 0: // scalar
+	  G1 = gamma_t * gamma_y ;
+	  break;
+	case 1: // p scalar
+	  G1 = gamma_t * gamma_y * gamma_5 ;
+	  break;
+	case 2: // vector_1 
+	  G1 = gamma_t * gamma_y * gamma_x;
+	  break;
+	case 3: // vector_2
+	  G1 = gamma_t * gamma_y * gamma_y;
+	  break;
+	case 4: // vector_3
+	  G1 = gamma_t * gamma_y * gamma_z;
+	  break;
+	case 5: // a vector_1 
+	  G1 = gamma_t * gamma_y * gamma_5 * gamma_x;
+	  break;
+	case 6: // a vector_2
+	  G1 = gamma_t * gamma_y * gamma_5 * gamma_y;
+	  break;
+	case 7: // a vector_3
+	  G1 = gamma_t * gamma_y * gamma_5 * gamma_z;
+	  break;
+	}
+
+	switch (op2 % 7){
+	case 0: // scalar
+	  G2 = gamma_5 * gamma_5 ;
+	  break;
+	case 1: // p scalar
+	  G2 = gamma_5 ;
+	  break;
+	case 2: // vector_1 
+	  G2 = gamma_x;
+	  break;
+	case 3: // vector_2
+	  G2 = gamma_y;
+	  break;
+	case 4: // vector_3
+	  G2 = gamma_z;
+	  break;
+	case 5: // a vector_1 
+	  G2 = gamma_5 * gamma_x;
+	  break;
+	case 6: // a vector_2
+	  G2 = gamma_5 * gamma_y;
+	  break;
+	case 7: // a vector_3
+	  G2 = gamma_5 * gamma_z;
+	  break;
+	}
+	//	auto G1 = gamma_t * gamma_y * gamma_5;
+	//	auto G2 = gamma_5 * gamma_5;
 	for (int i = 0;i < loop_N;i++)
 	  {
 	    auto &R = P[i];

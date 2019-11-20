@@ -12,7 +12,7 @@ int main(int argc,char *argv[])
   int V = npr.ret_V();
 
   vector<vector<complex<double>>> nuc;
-  auto mom = npr.threequark_sub(nuc);
+  auto mom = npr.threequark_sub(nuc,0,0); // S S
    vector<double> Dev;
    for(int i = 0;i < nuc.size();i++)
     {
